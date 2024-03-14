@@ -1,0 +1,29 @@
+# Compiled python modules.
+*.pyc
+# Compiled fortran extensions
+*.so
+*.so.dSYM
+
+# Data files (no longer kept under version control)
+*.nc
+*.ASC
+*.dat
+
+*.DS_Store
+
+# Setuptools distribution and binary build folders.
+/dist/
+/build/
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+
+# ipynb checkpoints
+.ipynb_checkpoints/
+
+# documentation built by sphinx
+/docs/build/
+
+*.pyd
+*-f2pywrappers2.f90
+_*module.c
