@@ -254,6 +254,7 @@ integer  i, j, k, klzb, ktop, klzb2
       small = 1.e-10
 
 ! calculate r
+!! BR r is mixing ratio, q is specific humidity
        rin = qin/(1.0 - qin)
        do i=1,ix
           do j=1,jx
