@@ -31,13 +31,13 @@ class SimplifiedBettsMiller(TimeDependentProcess):
     def __init__(self,
                 tau_bm=7200.,
                 rhbm=0.8,
-                do_simp=True,
-                do_shallower=False,
-                do_changeqref=False,
-                do_envsat=False,
+                do_simp=False,
+                do_shallower=True,
+                do_changeqref=True,
+                do_envsat=True,
                 do_taucape=False,
-                capetaubm=900.,
-                tau_min=2400.,
+                capetaubm=900.,  # only used if do_taucape == True
+                tau_min=2400.,   # only used if do_taucape == True
                 **kwargs):
         super(SimplifiedBettsMiller, self).__init__(**kwargs)
         self.time_type = 'explicit'
