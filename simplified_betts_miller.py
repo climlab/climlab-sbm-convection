@@ -86,9 +86,14 @@ class SimplifiedBettsMiller(TimeDependentProcess):
         if np.isscalar(field):
             return field
         else:
-            # for now just assume it's a single column
-            return field[np.newaxis, np.newaxis, :]
-
+            num_dims = len(field.shape)
+            if num_dims==1:  #  (num_lev only)
+                return np.tile(field, [self._IX, self._JX, 1])
+            elif num_dims==2:  # (num_lat, num_lev)
+                return np.tile(field, [self._IX, 1, 1])
+            else:  # assume we have (num_lon, num_lat, num_lev)
+                return field
+    
     def _sbm_to_climlab(self, field):
         ''' Output is either (IX, JX, KX) or (IX, JX).
         Transform this to...
@@ -104,7 +109,7 @@ class SimplifiedBettsMiller(TimeDependentProcess):
         #  All we have to do is ensure the input fields are (num_lat, num_lon, num_lev)
         T = self._climlab_to_sbm(self.state['Tatm'])
         dom = self.state['Tatm'].domain
-        P = self._climlab_to_sbm(dom.lev.points) * 100.  # convert to Pascals
+        P = self._climlab_to_sbm(dom.lev.points) * 100. # convert to Pascals
         PH = self._climlab_to_sbm(dom.lev.bounds) * 100.
         Q = self._climlab_to_sbm(self.state['q'])
         dt = self.timestep
