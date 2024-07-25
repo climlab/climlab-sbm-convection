@@ -612,9 +612,9 @@ integer  i, j, k, klzb, ktop, klzb2
       call escomp(t0,es)
       rs = rdgas/rvgas*es/p(kx)
       if (r0.ge.rs) then
-! if you�re already saturated, set lcl to be the surface value.
+! if you're already saturated, set lcl to be the surface value.
          plcl = p(kx)
-! the first level where you�re completely saturated.
+! the first level where you're completely saturated.
          klcl = kx
 ! saturate out to get the parcel temp and humidity at this level
 ! first order (in delta T) accurate expression for change in temp
@@ -623,7 +623,7 @@ integer  i, j, k, klzb, ktop, klzb2
          rp(kx) = rdgas/rvgas*es/p(kx)
       else
 ! if not saturated to begin with, use the analytic expression to calculate the
-! exact pressure and temperature where you�re saturated.
+! exact pressure and temperature where you're saturated.
          theta0 = tin(kx)*(pstar/p(kx))**kappa
 ! the expression that we utilize is
 ! log(r/theta**(1/kappa)*pstar*rvgas/rdgas/es00) = log(es/T**(1/kappa))
@@ -700,14 +700,14 @@ integer  i, j, k, klzb, ktop, klzb2
 !         write (*,*) 'tp, rp klcl:kx, new', tp(klcl:kx), rp(klcl:kx)
 ! CAPE/CIN stuff
          if ((tp(klcl).lt.tin(klcl)).and.nocape) then
-! if you�re not yet buoyant, then add to the CIN and continue
+! if you're not yet buoyant, then add to the CIN and continue
             cin = cin + rdgas*(tin(klcl) - &
                  tp(klcl))*log(phalf(klcl+1)/phalf(klcl))
          else
-! if you�re buoyant, then add to cape
+! if you're buoyant, then add to cape
             cape = cape + rdgas*(tp(klcl) - &
                   tin(klcl))*log(phalf(klcl+1)/phalf(klcl))
-! if it�s the first time buoyant, then set the level of free convection to k
+! if it's the first time buoyant, then set the level of free convection to k
             if (nocape) then
                nocape = .false.
                klfc = klcl
@@ -737,7 +737,7 @@ integer  i, j, k, klzb, ktop, klzb2
 ! reset CIN to zero.
             cin = 0.
 ! again, use the analytic expression to calculate the exact pressure and
-! temperature where you�re saturated.
+! temperature where you're saturated.
 ! the expression that we utilize is
 ! log(r/theta**(1/kappa)*pstar*rvgas/rdgas/es00)= log(es/T**(1/kappa))
 ! (the division by es00 is necessary because the RHS values are tabulated
@@ -762,7 +762,7 @@ integer  i, j, k, klzb, ktop, klzb2
                cin = cin + rdgas*(tin(k) - tp(k))*log(phalf(k+1)/phalf(k))
                k = k-1
             end do
-! first level where you�re saturated at the level
+! first level where you're saturated at the level
             klcl2 = k
 	    if (klcl2.eq.1) klcl2 = 2
 ! do a saturated ascent to get the parcel temp at the LCL.
@@ -795,14 +795,14 @@ integer  i, j, k, klzb, ktop, klzb2
             rp(klcl2) = rdgas/rvgas*es/p(klcl2)
 ! CAPE/CIN stuff
             if ((tp(klcl2).lt.tin(klcl2)).and.nocape) then
-! if you�re not yet buoyant, then add to the CIN and continue
+! if you're not yet buoyant, then add to the CIN and continue
                cin = cin + rdgas*(tin(klcl2) - &
                     tp(klcl2))*log(phalf(klcl2+1)/phalf(klcl2))
             else
-! if you�re buoyant, then add to cape
+! if you're buoyant, then add to cape
                cape = cape + rdgas*(tp(klcl) - &
                      tin(klcl))*log(phalf(klcl+1)/phalf(klcl))
-! if it�s the first time buoyant, then set the level of free convection to k
+! if it's the first time buoyant, then set the level of free convection to k
                if (nocape) then
                   nocape = .false.
                   klfc = klcl2
@@ -841,17 +841,17 @@ integer  i, j, k, klzb, ktop, klzb2
          call escomp(tp(k),es)
          rp(k) = rdgas/rvgas*es/p(k)
          if ((tp(k).lt.tin(k)).and.nocape) then
-! if you�re not yet buoyant, then add to the CIN and continue
+! if you're not yet buoyant, then add to the CIN and continue
             cin = cin + rdgas*(tin(k) - tp(k))*log(phalf(k+1)/phalf(k))
          elseif((tp(k).lt.tin(k)).and.(.not.nocape)) then
-! if you have CAPE, and it�s your first time being negatively buoyant,
+! if you have CAPE, and it's your first time being negatively buoyant,
 ! then set the level of zero buoyancy to k+1, and stop the moist ascent
             klzb = k+1
             go to 11
          else
-! if you�re buoyant, then add to cape
+! if you're buoyant, then add to cape
             cape = cape + rdgas*(tp(k) - tin(k))*log(phalf(k+1)/phalf(k))
-! if it�s the first time buoyant, then set the level of free convection to k
+! if it's the first time buoyant, then set the level of free convection to k
             if (nocape) then
                nocape = .false.
                klfc = k
