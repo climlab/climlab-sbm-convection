@@ -4,7 +4,7 @@ channels:
 dependencies:
   - pip
   - numpy
-  - gfortran_osx-arm64
-  - libgfortran
+  - fortran-compiler
   - pytest
   - charset-normalizer
+  - meson-python
