@@ -19,21 +19,16 @@ Here are instructions to create a build environment (including Fortran compiler)
 
 Starting from the root of the `climlab-sbm-convection` repo *(example for Apple M1 machine, see `./ci/` for other environment files)*:
 ```
-mamba create --name sbm_build_env python=3.10 --channel conda-forge
-mamba env update --file ./ci/requirements-macos-arm64.yml
+mamba env create --file ./ci/requirements-macos-arm64.yml
 conda activate sbm_build_env
 ```
 
-### Building with f2py
+### Building and installing into the Python environment
 
 From the root of the repository, do this:
 ```
-f2py -c -m _simplified_betts_miller climlab_betts_miller.f90
+python -m pip install . --no-deps -vv
 ```
-
-This will create the shared object `_simplified_betts_miller.cpython-*.so` that can be imported in a Python session.
-
-_This is a work in progress, and eventually there will be better packaging so this manual build step will not be needed._
 
 ##  Example usage
 

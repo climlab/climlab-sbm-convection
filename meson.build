@@ -1,18 +1,32 @@
 project('climlab_sbm_convection', 'c')
 
-py = import('python').find_installation(pure: false)
+add_languages('fortran')
 
-py.extension_module(
-    'our_first_module',
-    'our_first_module.c',
-    install: true,
+py = import('python').find_installation(pure: false)
+py_dep = py.dependency()
+
+incdir_numpy = run_command(py,
+  ['-c', 'import os; os.chdir(".."); import numpy; print(numpy.get_include())'],
+  check : true
+).stdout().strip()
+
+incdir_f2py = run_command(py,
+    ['-c', 'import os; os.chdir(".."); import numpy.f2py; print(numpy.f2py.get_include())'],
+    check : true
+).stdout().strip()
+
+mysource = custom_target('_simplified_betts_miller.c',
+  input : ['climlab_betts_miller.f90'],  
+  output : ['_simplified_betts_millermodule.c', '_simplified_betts_miller-f2pywrappers.f'],
+  command : [py, '-m', 'numpy.f2py', '@INPUT@', '-m', '_simplified_betts_miller', '--lower']
 )
 
-py3.extension_module('_simplified_betts_miller',
-  flapack_module,
-  c_args: [Wno_empty_body],
-  link_args: version_link_args,
-  dependencies: [lapack_dep, blas_dep, fortranobject_dep],
-  install: true,
-  subdir: 'scipy/linalg'
+inc_np = include_directories(incdir_numpy, incdir_f2py)
+
+py.extension_module('_simplified_betts_miller',
+  ['climlab_betts_miller.f90', mysource],
+  incdir_f2py / 'fortranobject.c',
+  include_directories: inc_np,
+  dependencies : py_dep,
+  install : true
 )

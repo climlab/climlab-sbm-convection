@@ -2,9 +2,9 @@ name: sbm_build_env
 channels:
   - conda-forge
 dependencies:
+  - python<3.12
   - pip
   - numpy
   - fortran-compiler
   - pytest
-  - charset-normalizer
   - meson-python
