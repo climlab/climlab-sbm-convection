@@ -10,6 +10,7 @@
 *.dat
 
 *.DS_Store
+.vscode
 
 # Setuptools distribution and binary build folders.
 /dist/
