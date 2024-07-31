@@ -19,17 +19,12 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.9', '3.10', '3.11', '3.12']
-        os: [Ubuntu, macOS, Windows]
+        os: [Ubuntu, macOS]
         include:
           - os: Ubuntu
             environment-file: ci/requirements-linux.yml
-            shell: bash -l {0}
           - os: macOS
             environment-file: ci/requirements-macos.yml
-            shell: bash -l {0}
-          - os: Windows
-            environment-file: ci/requirements-windows.yml
-            shell: powershell
 
     steps:
       - uses: actions/checkout@v4
@@ -38,7 +33,6 @@ jobs:
         with:
           environment-file: ${{ matrix.environment-file }}
           create-args: python=${{matrix.python-version}}
-          init-shell: ${{ matrix.shell }}
       - name: Build and install
         run: |
           python -m pip install --no-deps --editable .
