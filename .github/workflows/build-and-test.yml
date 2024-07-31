@@ -35,7 +35,7 @@ jobs:
             shell: bash
           - os: Windows
             environment-file: ci/requirements-windows.yml
-            shell: powershell
+            shell: bash
 
     steps:
       - uses: actions/checkout@v4
