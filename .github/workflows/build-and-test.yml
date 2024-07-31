@@ -18,17 +18,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # python-version: ['3.9', '3.10', '3.11', '3.12']
-        python-version: ['3.11', '3.12']
-        # os: [Ubuntu, macOS, Windows]
-        os: [Ubuntu]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+        os: [Ubuntu, macOS, Windows]
         include:
           - os: Ubuntu
             environment-file: ci/requirements-linux.yml
-          # - os: macOS
-          #   environment-file: ci/requirements-macos.yml
-          # - os: Windows
-          #   environment-file: ci/requirements-windows.yml
+          - os: macOS
+            environment-file: ci/requirements-macos.yml
+          - os: Windows
+            environment-file: ci/requirements-windows.yml
 
     steps:
       - uses: actions/checkout@v4
@@ -36,7 +34,6 @@ jobs:
         uses: mamba-org/setup-micromamba@v1
         with:
           environment-file: ${{ matrix.environment-file }}
-          # environment-name: sbm_build_env
           create-args: python=${{matrix.python-version}}
       - name: Build and install
         run: |
