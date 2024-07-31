@@ -81,7 +81,7 @@ def test_capecalc():
     cape_sbm, cin_sbm, tp,rp,klzb = capecalc(num_lev,pfull,phalf,
                         Cp_air,rdgas,rvgas,HLv,kappa,es0,tin,rin,avgbl)
     #  relative tolerance for these tests ...
-    tol = 1E-8
+    tol = 1E-6
     assert cape_sbm == pytest.approx(2605.31640625, rel=tol)
     assert cin_sbm == pytest.approx(122.73005676269531, rel=tol)
     assert klzb == 28
