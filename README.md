@@ -1,5 +1,8 @@
 # Simplified Betts-Miller convection scheme
 
+[![Build and test](https://github.com/brian-rose/climlab-sbm-convection/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/brian-rose/climlab-sbm-convection/actions/workflows/build-and-test.yml)
+
+
 Brian Rose, University at Albany
 
 _This is a work in progress!_
