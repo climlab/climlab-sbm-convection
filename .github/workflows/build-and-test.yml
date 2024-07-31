@@ -23,10 +23,13 @@ jobs:
         include:
           - os: Ubuntu
             environment-file: ci/requirements-linux.yml
+            shell: bash -l {0}
           - os: macOS
             environment-file: ci/requirements-macos.yml
+            shell: bash -l {0}
           - os: Windows
             environment-file: ci/requirements-windows.yml
+            shell: powershell
 
     steps:
       - uses: actions/checkout@v4
