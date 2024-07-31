@@ -26,6 +26,13 @@ mamba env create --file ./ci/requirements-macos-arm64.yml
 conda activate sbm_build_env
 ```
 
+Or, to specify the Python version, you can do
+```
+mamba create --name sbm_build_env python=3.11 --channel conda-forge
+mamba env update --file ./ci/requirements-macos-arm64.yml
+conda activate sbm_build_env
+```
+
 ### Building and installing into the Python environment
 
 From the root of the repository, do this:
@@ -42,6 +49,12 @@ pytest -v --pyargs climlab_sbm_convection
 
 ##  Example usage
 
-For now, see the notebook in this repo.
+For now, see the notebooks in the `docs` directory of this repo.
 
 An appropriate runtime environment for this notebook can be found [here](https://github.com/brian-rose/ClimateLaboratoryBook/blob/main/environment.yml).
+
+To create an appropriate runtime environment for these notebooks, do this after building from source:
+
+```
+mamba install -c conda-forge climlab metpy jupyter matplotlib pandas ffmpeg
+```
