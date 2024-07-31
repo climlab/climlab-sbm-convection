@@ -33,6 +33,13 @@ From the root of the repository, do this:
 python -m pip install . --no-deps -vv
 ```
 
+### Running tests
+
+To run tests, do this from any directory other than the climlab-emanuel-convection repo:
+```
+pytest -v --pyargs climlab_sbm_convection
+```
+
 ##  Example usage
 
 For now, see the notebook in this repo.

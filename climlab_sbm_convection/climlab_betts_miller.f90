@@ -29,7 +29,7 @@
 !use      constants_mod, only:  HLv,HLs,Cp_air,Grav,rdgas,rvgas, cph2ovapor, &
 !                               kappa, es0
 
-! BR constants actually needed are HLv,Cp_air,Grav,rdgas,rvgas,kappa, es0
+! CLIMLAB constants actually needed are HLv,Cp_air,Grav,rdgas,rvgas,kappa, es0
 !  These will be passed as inputs from Python
 
 !implicit none
@@ -63,7 +63,7 @@ end subroutine escomp
 !  character(len=128) :: tagname = '$Name:  $'
 !
 !!!!
-!!!! BR: these parameters are not actually used in Dargan's code
+!!!! CLIMLAB: these parameters are not actually used in Dargan's code
 !!!! except do_init but we are not doing any i/o from Fortran
 ! !-----------------------------------------------------------------------
 ! !   ---- local/private data ----
@@ -92,7 +92,7 @@ end subroutine escomp
 !                             do_shallower, do_changeqref, &
 !                             do_envsat, do_taucape, capetaubm, tau_min
 
-! BR we will pass these nine switches/parameters as input:
+! CLIMLAB we will pass these nine switches/parameters as input:
 ! tau_bm, rhbm, do_simp, do_shallower, do_changeqref, do_envsat, do_taucape, capetaubm, tau_min
 
 
@@ -142,7 +142,7 @@ end subroutine escomp
    !                         rain, snow, tdel, qdel, q_ref, bmflag, &
    !                         klzbs, cape, cin, t_ref,invtau_bm_t,invtau_bm_q, &
    !                         capeflag, mask, conv)
-!! BR add more input arguments,
+!! CLIMLAB add more input arguments,
 !! remove input coldT and output snow,
 !!  remove optional arguments mask and conv
 subroutine betts_miller (dt, tin, qin, pfull, phalf, &
@@ -190,7 +190,7 @@ subroutine betts_miller (dt, tin, qin, pfull, phalf, &
 !-----------------------------------------------------------------------
 !--------------------- interface arguments -----------------------------
 
-   !! BR pass grid dimensions explicitly
+   !! CLIMLAB pass grid dimensions explicitly
    integer, intent(in) :: ix, jx, kx
    !real   , intent(in) , dimension(:,:,:) :: tin, qin, pfull, phalf
    real, intent(in) :: tin(ix,jx,kx), qin(ix,jx,kx), pfull(ix,jx,kx), phalf(ix,jx,kx+1)
@@ -201,7 +201,7 @@ subroutine betts_miller (dt, tin, qin, pfull, phalf, &
    real, intent(out) :: rain(ix,jx), bmflag(ix,jx), klzbs(ix,jx), cape(ix,jx), &
       cin(ix,jx), invtau_bm_t(ix,jx), invtau_bm_q(ix,jx), capeflag(ix,jx)
 
-   !! BR added new inputs
+   !! CLIMLAB added new inputs
    real, intent(in) :: HLv,Cp_air,Grav,rdgas,rvgas,kappa, es0
    real, intent(in) :: tau_bm_input, rhbm, capetaubm, tau_min
    logical, intent(in) :: do_simp, do_shallower, do_changeqref, do_envsat, &
@@ -227,7 +227,7 @@ logical :: avgbl
    real                                                ::  &
        cape1, cin1, tot, deltak, deltaq, qrefint, deltaqfrac, deltaqfrac2, &
        ptopfrac, es, capeflag1, plzb, plcl, cape2, small
-!! BR tau_bm is modified so declare it as a local variable
+!! CLIMLAB tau_bm is modified so declare it as a local variable
    real tau_bm
 !integer  i, j, k, ix, jx, kx, klzb, ktop, klzb2
 integer  i, j, k, klzb, ktop, klzb2
@@ -237,7 +237,7 @@ integer  i, j, k, klzb, ktop, klzb2
 !f2py depend(ix,jx,kx) tdel,qdel,q_ref,t_ref
 !f2py depend(ix,jx) rain,bmflag,klzbs,cape,cin,invtau_bm_t,invtau_bm_q,capeflag
 
-!! BR first initialize tau_bm
+!! CLIMLAB first initialize tau_bm
   tau_bm = tau_bm_input
 
 !-----------------------------------------------------------------------
@@ -254,7 +254,7 @@ integer  i, j, k, klzb, ktop, klzb2
       small = 1.e-10
 
 ! calculate r
-!! BR r is mixing ratio, q is specific humidity
+!! CLIMLAB r is mixing ratio, q is specific humidity
        rin = qin/(1.0 - qin)
        do i=1,ix
           do j=1,jx
@@ -275,7 +275,7 @@ integer  i, j, k, klzb, ktop, klzb2
              !                cp_air, rdgas, rvgas, hlv, kappa, tin(i,j,:), &
              !                rin(i,j,:), avgbl, cape1, cin1, tpc, &
              !                rpc, klzb)
-             call capecalcnew( kx,  pfull(i,j,:),  phalf(i,j,:),&
+             call capecalc( kx,  pfull(i,j,:),  phalf(i,j,:),&
                             cp_air, rdgas, rvgas, hlv, kappa, es0, tin(i,j,:), &
                             rin(i,j,:), avgbl, cape1, cin1, tpc, &
                             rpc, klzb)
@@ -526,11 +526,11 @@ integer  i, j, k, klzb, ktop, klzb2
 
 !all new cape calculation.
 
-!! BR note: added parameter es0 as in input argument
+!! CLIMLAB: added parameter es0 as in input argument
 
 !      subroutine capecalcnew(kx,p,phalf,cp_air,rdgas,rvgas,hlv,kappa,tin,rin,&
 !                             avgbl,cape,cin,tp,rp,klzb)
-    subroutine capecalcnew(kx,p,phalf,cp_air,rdgas,rvgas,hlv,kappa,es0,&
+    subroutine capecalc(kx,p,phalf,cp_air,rdgas,rvgas,hlv,kappa,es0,&
                       tin,rin,avgbl,cape,cin,tp,rp,klzb)
 
 !
@@ -873,7 +873,7 @@ integer  i, j, k, klzb, ktop, klzb2
 !       write (*,*) 'tp, new', tp
 !       write (*,*) 'tin new', tin
 !       write (*,*) 'klcl, klfc, klzb new', klcl, klfc, klzb
-      end subroutine capecalcnew
+      end subroutine capecalc
 
 ! lookup table for the analytic evaluation of LCL
       subroutine lcltabl(value,tlcl)

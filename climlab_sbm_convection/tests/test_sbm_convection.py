@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from climlab_sbm_convection import betts_miller, escomp
+from climlab_sbm_convection import betts_miller, escomp, capecalc
 
 
 def test_saturation():
