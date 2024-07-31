@@ -1,11 +1,9 @@
 # Simplified Betts-Miller convection scheme
 
-[![Build and test](https://github.com/brian-rose/climlab-sbm-convection/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/brian-rose/climlab-sbm-convection/actions/workflows/build-and-test.yml)
+[![Build and test](https://github.com/climlab/climlab-sbm-convection/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/climlab/climlab-sbm-convection/actions/workflows/build-and-test.yml)
 
 
 Brian Rose, University at Albany
-
-_This is a work in progress!_
 
 ## About
 
@@ -13,6 +11,11 @@ This is a stand-alone Python wrapper for the Simplified Betts-Miller convection 
 
 Thanks to Dargan Frierson for sharing the original Fortran code.
 
+The primary use-case is to serve as a moist convection driver option
+for [climlab](https://climlab.readthedocs.io/), but it can also be used 
+as a stand-alone model. This is a lightweight wrapper that emulates the 
+Fortran interface as closely as possible. 
+Dargan Frierson's original Fortran code is bundled here in the `src` directory for reference.
 
 ## Building from source
 
