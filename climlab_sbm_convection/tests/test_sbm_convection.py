@@ -158,3 +158,56 @@ def test_betts_miller():
     assert cin == pytest.approx(-5.2824445, rel=tol)
     assert rain[0,0] == pytest.approx(1.4249854, rel=tol)
     assert bmflag[0,0] == 2
+
+    # Make sure we can call the Betts-Miller routine with different option flags
+    do_simp = True  # alternative way to conserve energy by adjusting the relaxation timescale on temperature rather than calculating an adjusted reference temperature. 
+    rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
+    betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
+                                          HLv, Cp_air, Grav,
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          do_simp, do_shallower, do_changeqref, 
+                                          do_envsat, do_taucape, capetaubm, tau_min, 
+                                          ix, jx, kx,)
+    do_shallower = False  # Don't use the scheme that lowers the depth of shallow convection
+    #  In this case, since we set do_changeqref = True, we use the scheme that involves
+    #  changing the reference profiles for both temperature and humidity so the precipitation is zero
+    rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
+    betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
+                                          HLv, Cp_air, Grav,
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          do_simp, do_shallower, do_changeqref, 
+                                          do_envsat, do_taucape, capetaubm, tau_min, 
+                                          ix, jx, kx,)
+    do_changeqref = False
+    rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
+    betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
+                                          HLv, Cp_air, Grav,
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          do_simp, do_shallower, do_changeqref, 
+                                          do_envsat, do_taucape, capetaubm, tau_min, 
+                                          ix, jx, kx,)
+    do_envsat = False  
+    # The reference profile of temperature is always the pseudoadiabat computed based on 
+    # temperature and humidity at the surface. 
+    # The parameter do_envsat determines how the reference profile of humidity is computed.
+    # Setting do_envsat=False gives the situation described in Section 2d of the Frierson paper, 
+    # namely that the same pseudoadiabat is used to define the target humidity profile, 
+    # just multiplying by a specified relative humidity. 
+    # In that sense, the target of the moisture adjustment due to convection is dictated by surface conditions.
+    rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
+    betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
+                                          HLv, Cp_air, Grav,
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          do_simp, do_shallower, do_changeqref, 
+                                          do_envsat, do_taucape, capetaubm, tau_min, 
+                                          ix, jx, kx,)
+
+    do_taucape = True
+    #  this makes the relaxation time proportional to 1/sqrt(CAPE), and so makes the scheme more aggressive when / where the CAPE is larger.
+    rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
+    betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
+                                          HLv, Cp_air, Grav,
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          do_simp, do_shallower, do_changeqref, 
+                                          do_envsat, do_taucape, capetaubm, tau_min, 
+                                          ix, jx, kx,)
