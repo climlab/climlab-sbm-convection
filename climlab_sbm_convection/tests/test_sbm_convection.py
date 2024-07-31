@@ -67,6 +67,28 @@ rin = np.array([2.51036657e-06, 2.39861183e-06, 2.46047788e-06, 2.55646085e-06,
        5.40208449e-03, 4.67974268e-03, 4.62895382e-03, 1.02771488e-02,
        1.03451661e-02, 1.03494641e-02, 1.13785111e-02, 1.14478408e-02,
        1.16744206e-02, 1.18065917e-02, 1.36767697e-02])
+#  Specific humidity
+qin = rin / (1+rin)
+#  A different profile with moister surface (unstable)
+qin_moist = np.array([5.93771129e-06, 5.68577791e-06, 5.80706944e-06, 6.00110638e-06,
+       6.03901392e-06, 6.49224559e-06, 5.71463886e-06, 5.01374616e-06,
+       5.43522603e-06, 5.49382334e-06, 5.61464845e-06, 5.67469660e-06,
+       5.23923820e-06, 5.25597979e-06, 6.70673839e-06, 6.06059720e-06,
+       5.92616209e-06, 8.42302362e-06, 1.01030739e-05, 1.32494765e-05,
+       1.36556725e-05, 1.37516052e-05, 1.47523832e-05, 1.45556830e-05,
+       1.49360133e-05, 1.20225823e-05, 1.08834829e-05, 1.17861379e-05,
+       1.81724573e-05, 1.96899848e-05, 1.99275199e-05, 2.45823173e-05,
+       3.23065317e-05, 3.40266435e-05, 4.02943267e-05, 3.87277717e-05,
+       3.58618542e-05, 3.80270204e-05, 4.10783720e-05, 4.17019517e-05,
+       7.02271908e-05, 7.96567986e-05, 1.34236641e-04, 3.22264744e-04,
+       3.22107587e-04, 4.52989922e-04, 5.29771424e-04, 5.22887110e-04,
+       5.19823623e-04, 4.88115344e-04, 3.06741575e-04, 3.03485816e-04,
+       5.11536466e-04, 6.59719040e-04, 1.79220809e-03, 2.16484229e-03,
+       3.01856662e-03, 3.10646106e-03, 3.34835210e-03, 3.91258577e-03,
+       4.43348176e-03, 5.58148861e-03, 5.92172553e-03, 7.51144610e-03,
+       7.65561374e-03, 6.66435178e-03, 6.59419730e-03, 1.41233421e-02,
+       1.42051974e-02, 1.42074340e-02, 1.55371996e-02, 1.56232526e-02,
+       1.58981688e-02, 1.60528379e-02, 1.84526661e-02])
 
 def test_saturation():
     temperature = 280.  # in Kelvin
@@ -78,10 +100,61 @@ def test_saturation():
 def test_capecalc():
     es0 = 1.0
     avgbl = False  # If true, the parcel is averaged in theta and r up to its LCL -- not actually implemented
-    cape_sbm, cin_sbm, tp,rp,klzb = capecalc(num_lev,pfull,phalf,
+    cape, cin, tp,rp,klzb = capecalc(num_lev,pfull,phalf,
                         Cp_air,rdgas,rvgas,HLv,kappa,es0,tin,rin,avgbl)
     #  relative tolerance for these tests ...
     tol = 1E-6
-    assert cape_sbm == pytest.approx(2605.31640625, rel=tol)
-    assert cin_sbm == pytest.approx(122.73005676269531, rel=tol)
+    assert cape == pytest.approx(2605.31640625, rel=tol)
+    assert cin == pytest.approx(122.73005676269531, rel=tol)
     assert klzb == 28
+
+def test_betts_miller():
+    seconds_per_hour = 3600
+    dt = seconds_per_hour * 3
+    tau_bm=7200.
+    rhbm=0.7
+    do_simp=False
+    do_shallower=True
+    do_changeqref=True
+    do_envsat=True
+    do_taucape=False
+    capetaubm=900.  # only used if do_taucape == True
+    tau_min=2400.   # only used if do_taucape == True
+    ix = 1; jx = 1; kx = num_lev
+    es0 = 1.0
+
+    #  Convert input arrays to the expected dimensionality [ix,jx,kx]
+    tin_grid = tin[np.newaxis, np.newaxis, :]
+    qin_grid = qin[np.newaxis, np.newaxis, :]
+    qin_grid_moist = qin_moist[np.newaxis, np.newaxis, :]
+    pfull_grid = pfull[np.newaxis, np.newaxis, :]
+    phalf_grid = phalf[np.newaxis, np.newaxis, :]
+
+    rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
+        betts_miller(dt, tin_grid, qin_grid, pfull_grid, phalf_grid, 
+                                          HLv, Cp_air, Grav,
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          do_simp, do_shallower, do_changeqref, 
+                                          do_envsat, do_taucape, capetaubm, tau_min, 
+                                          ix, jx, kx,)
+    tol = 1E-6
+    assert cape == pytest.approx(2605.31640625, rel=tol)
+    assert cin == pytest.approx(122.73005676269531, rel=tol)
+    assert rain[0,0] == 0.
+    assert bmflag[0,0] == 1.
+    assert capeflag[0,0] == 0.
+    assert np.all(tdel) == 0.
+    assert np.all(qdel) == 0.
+
+    # Now destabilize the surface with added moisture
+    rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
+    betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
+                                          HLv, Cp_air, Grav,
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          do_simp, do_shallower, do_changeqref, 
+                                          do_envsat, do_taucape, capetaubm, tau_min, 
+                                          ix, jx, kx,)
+    assert cape == pytest.approx(73.06134, rel=tol)
+    assert cin == pytest.approx(-5.2824445, rel=tol)
+    assert rain[0,0] == pytest.approx(1.4249854, rel=tol)
+    assert bmflag[0,0] == 2
