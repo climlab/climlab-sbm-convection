@@ -59,6 +59,11 @@ class SimplifiedBettsMiller(TimeDependentProcess):
         self.add_input('do_changeqref', do_changeqref)
         self.add_input('do_envsat', do_envsat)
         self.add_input('do_taucape', do_taucape)
+        if hasattr(rhbm, 'shape'):
+            assert np.all(rhbm.shape == self.Tatm.shape), f'rhbm {rhbm.shape} has to have same shape as Tatm {self.Tatm.shape}'
+            self.rhbm = rhbm
+        else:
+            self.rhbm = rhbm * np.ones_like(self.Tatm)
 
         self._KX = self.lev.size
         try:
@@ -104,6 +109,7 @@ class SimplifiedBettsMiller(TimeDependentProcess):
         #  which is the same as climlab convention.
         #  All we have to do is ensure the input fields are (num_lat, num_lon, num_lev)
         T = self._climlab_to_sbm(self.state['Tatm'])
+        RHBM = self._climlab_to_sbm(self.rhbm)
         dom = self.state['Tatm'].domain
         P = self._climlab_to_sbm(dom.lev.points) * 100. # convert to Pascals
         PH = self._climlab_to_sbm(dom.lev.bounds) * 100.
@@ -118,9 +124,9 @@ class SimplifiedBettsMiller(TimeDependentProcess):
 
         (rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, \
         invtau_bm_t, invtau_bm_q, capeflag) = \
-            betts_miller(dt, T, Q, P, PH,
+            betts_miller(dt, T, Q, RHBM, P, PH,
                          HLv,Cp_air,Grav,rdgas,rvgas,kappa, es0,
-                         self.tau_bm, self.rhbm, self.do_simp, self.do_shallower,
+                         self.tau_bm, self.do_simp, self.do_shallower,
                          self.do_changeqref, self.do_envsat, self.do_taucape,
                          self.capetaubm, self.tau_min,self._IX, self._JX, self._KX, )
 

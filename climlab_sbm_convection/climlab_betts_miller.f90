@@ -93,6 +93,7 @@ end subroutine escomp
 !                             do_envsat, do_taucape, capetaubm, tau_min
 
 ! CLIMLAB we will pass these nine switches/parameters as input:
+! CLIMLAB: rhbm is now an array parameter rather than scalar
 ! tau_bm, rhbm, do_simp, do_shallower, do_changeqref, do_envsat, do_taucape, capetaubm, tau_min
 
 
@@ -101,7 +102,7 @@ end subroutine escomp
 !
 !  tau_bm    =  betts-miller relaxation timescale (seconds)
 !
-!  rhbm      = relative humidity that you're relaxing towards
+!  rhbm      = relative humidity profile that you're relaxing towards
 !
 !  do_simp = do the simple method where you adjust timescales to make
 !            precip continuous always
@@ -145,9 +146,10 @@ end subroutine escomp
 !! CLIMLAB add more input arguments,
 !! remove input coldT and output snow,
 !!  remove optional arguments mask and conv
-subroutine betts_miller (dt, tin, qin, pfull, phalf, &
+!! CLIMLAB also change call order, since rhbm is now an array input
+subroutine betts_miller (dt, tin, qin, rhbm, pfull, phalf, &
                         HLv,Cp_air,Grav,rdgas,rvgas,kappa, es0, &
-                        tau_bm_input, rhbm, do_simp, do_shallower, do_changeqref, &
+                        tau_bm_input, do_simp, do_shallower, do_changeqref, &
                         do_envsat, do_taucape, capetaubm, tau_min, &
                         ix, jx, kx, &
                         rain, tdel, qdel, q_ref, bmflag, &
@@ -194,6 +196,8 @@ subroutine betts_miller (dt, tin, qin, pfull, phalf, &
    integer, intent(in) :: ix, jx, kx
    !real   , intent(in) , dimension(:,:,:) :: tin, qin, pfull, phalf
    real, intent(in) :: tin(ix,jx,kx), qin(ix,jx,kx), pfull(ix,jx,kx), phalf(ix,jx,kx+1)
+   !! CLIMLAB rhbm is now array input
+   real, intent(in) :: rhbm(ix,jx,kx)
    real   , intent(in)                    :: dt
    !logical   , intent(in) :: coldT
    !real   , intent(out), dimension(:,:)   :: rain,snow, bmflag, klzbs, cape, &
@@ -203,7 +207,7 @@ subroutine betts_miller (dt, tin, qin, pfull, phalf, &
 
    !! CLIMLAB added new inputs
    real, intent(in) :: HLv,Cp_air,Grav,rdgas,rvgas,kappa, es0
-   real, intent(in) :: tau_bm_input, rhbm, capetaubm, tau_min
+   real, intent(in) :: tau_bm_input, capetaubm, tau_min
    logical, intent(in) :: do_simp, do_shallower, do_changeqref, do_envsat, &
        do_taucape
 
@@ -233,7 +237,7 @@ logical :: avgbl
 integer  i, j, k, klzb, ktop, klzb2
 
 !  These are not comments! Necessary directives to f2py to handle array dimensions
-!f2py depend(ix,jx,kx) p,phalf,tin,qin
+!f2py depend(ix,jx,kx) p,phalf,tin,qin,rhbm
 !f2py depend(ix,jx,kx) tdel,qdel,q_ref,t_ref
 !f2py depend(ix,jx) rain,bmflag,klzbs,cape,cin,invtau_bm_t,invtau_bm_q,capeflag
 
@@ -296,13 +300,13 @@ integer  i, j, k, klzb, ktop, klzb2
                    if(do_envsat) then
 !                      call establ2(es,tin(i,j,k))
                       call escomp(tin(i,j,k),es)
-                      es = es*rhbm
+                      es = es*rhbm(i,j,k)
 !                      rpc(k) = d622*es/(pfull(i,j,k) - d378*es)
                       rpc(k) = rdgas/rvgas*es/pfull(i,j,k)
                       q_ref(i,j,k) = rpc(k)/(1 + rpc(k))
                    else
-                      rpc(k) = rhbm*rpc(k)
-!                      eref(k) = rhbm*pfull(i,j,k)*rpc(k)/(d622 + d378*rpc(k))
+                      rpc(k) = rhbm(i,j,k)*rpc(k)
+!                      eref(k) = rhbm(i,j,k)*pfull(i,j,k)*rpc(k)/(d622 + d378*rpc(k))
 !                      rpc(k) = d622*eref(k)/(pfull(i,j,k) - d378*eref(k))
                       q_ref(i,j,k) = rpc(k)/(1 + rpc(k))
                    endif
