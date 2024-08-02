@@ -34,6 +34,7 @@ class SimplifiedBettsMiller(TimeDependentProcess):
                 do_taucape=False,
                 capetaubm=900.,  # only used if do_taucape == True
                 tau_min=2400.,   # only used if do_taucape == True
+                minimum_pressure=10.  # prevent the SBM scheme from modifying temperature and humidity above this level (in hPa)
                 **kwargs):
         super(SimplifiedBettsMiller, self).__init__(**kwargs)
         self.time_type = 'explicit'
@@ -74,6 +75,7 @@ class SimplifiedBettsMiller(TimeDependentProcess):
             self._IX = self.lon.size
         except:
             self._IX = 1
+        self.minimum_pressure = minimum_pressure
 
     def _climlab_to_sbm(self, field):
         '''Prepare field with proper dimension order.
@@ -130,6 +132,10 @@ class SimplifiedBettsMiller(TimeDependentProcess):
                          self.do_changeqref, self.do_envsat, self.do_taucape,
                          self.capetaubm, self.tau_min,self._IX, self._JX, self._KX, )
 
+        # Prevent any tendencies above the minimum pressure level
+        zeros_ind = np.where(P<=self.minimum_pressure)
+        tdel[zeros_ind] = 0.
+        qdel[zeros_ind] = 0.
         # Routine returns adjustments rather than tendencies
         dTdt = tdel / dt
         dQdt = qdel / dt
