@@ -34,7 +34,7 @@ class SimplifiedBettsMiller(TimeDependentProcess):
                 do_taucape=False,
                 capetaubm=900.,  # only used if do_taucape == True
                 tau_min=2400.,   # only used if do_taucape == True
-                minimum_pressure=10.  # prevent the SBM scheme from modifying temperature and humidity above this level (in hPa)
+                minimum_pressure=10.,  # prevent the SBM scheme from modifying temperature and humidity above this level (in hPa)
                 **kwargs):
         super(SimplifiedBettsMiller, self).__init__(**kwargs)
         self.time_type = 'explicit'
