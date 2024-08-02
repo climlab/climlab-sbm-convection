@@ -124,9 +124,9 @@ class SimplifiedBettsMiller(TimeDependentProcess):
 
         (rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, \
         invtau_bm_t, invtau_bm_q, capeflag) = \
-            betts_miller(dt, T, Q, P, PH,
+            betts_miller(dt, T, Q, RHBM, P, PH,
                          HLv,Cp_air,Grav,rdgas,rvgas,kappa, es0,
-                         self.tau_bm, RHBM, self.do_simp, self.do_shallower,
+                         self.tau_bm, self.do_simp, self.do_shallower,
                          self.do_changeqref, self.do_envsat, self.do_taucape,
                          self.capetaubm, self.tau_min,self._IX, self._JX, self._KX, )
 

@@ -146,9 +146,10 @@ end subroutine escomp
 !! CLIMLAB add more input arguments,
 !! remove input coldT and output snow,
 !!  remove optional arguments mask and conv
-subroutine betts_miller (dt, tin, qin, pfull, phalf, &
+!! CLIMLAB also change call order, since rhbm is now an array input
+subroutine betts_miller (dt, tin, qin, rhbm, pfull, phalf, &
                         HLv,Cp_air,Grav,rdgas,rvgas,kappa, es0, &
-                        tau_bm_input, rhbm, do_simp, do_shallower, do_changeqref, &
+                        tau_bm_input, do_simp, do_shallower, do_changeqref, &
                         do_envsat, do_taucape, capetaubm, tau_min, &
                         ix, jx, kx, &
                         rain, tdel, qdel, q_ref, bmflag, &
