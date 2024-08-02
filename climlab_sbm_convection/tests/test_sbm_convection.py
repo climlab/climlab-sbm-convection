@@ -129,11 +129,12 @@ def test_betts_miller():
     qin_grid_moist = qin_moist[np.newaxis, np.newaxis, :]
     pfull_grid = pfull[np.newaxis, np.newaxis, :]
     phalf_grid = phalf[np.newaxis, np.newaxis, :]
+    rhbm_grid = rhbm * np.ones_like(tin_grid)
 
     rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
         betts_miller(dt, tin_grid, qin_grid, pfull_grid, phalf_grid, 
                                           HLv, Cp_air, Grav,
-                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm_grid, 
                                           do_simp, do_shallower, do_changeqref, 
                                           do_envsat, do_taucape, capetaubm, tau_min, 
                                           ix, jx, kx,)
@@ -150,7 +151,7 @@ def test_betts_miller():
     rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
     betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
                                           HLv, Cp_air, Grav,
-                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm_grid, 
                                           do_simp, do_shallower, do_changeqref, 
                                           do_envsat, do_taucape, capetaubm, tau_min, 
                                           ix, jx, kx,)
@@ -159,12 +160,22 @@ def test_betts_miller():
     assert rain[0,0] == pytest.approx(1.4249854, rel=tol)
     assert bmflag[0,0] == 2
 
+    # Can we call the Betts-Miller routine with a non-unform profile of relative humidity?
+    rhbm_grid[:] = np.linspace(0.6, 0.9, num_lev)
+    rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
+    betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
+                                          HLv, Cp_air, Grav,
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm_grid, 
+                                          do_simp, do_shallower, do_changeqref, 
+                                          do_envsat, do_taucape, capetaubm, tau_min, 
+                                          ix, jx, kx,)
+
     # Make sure we can call the Betts-Miller routine with different option flags
     do_simp = True  # alternative way to conserve energy by adjusting the relaxation timescale on temperature rather than calculating an adjusted reference temperature. 
     rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
     betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
                                           HLv, Cp_air, Grav,
-                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm_grid, 
                                           do_simp, do_shallower, do_changeqref, 
                                           do_envsat, do_taucape, capetaubm, tau_min, 
                                           ix, jx, kx,)
@@ -174,7 +185,7 @@ def test_betts_miller():
     rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
     betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
                                           HLv, Cp_air, Grav,
-                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm_grid, 
                                           do_simp, do_shallower, do_changeqref, 
                                           do_envsat, do_taucape, capetaubm, tau_min, 
                                           ix, jx, kx,)
@@ -182,7 +193,7 @@ def test_betts_miller():
     rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
     betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
                                           HLv, Cp_air, Grav,
-                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm_grid, 
                                           do_simp, do_shallower, do_changeqref, 
                                           do_envsat, do_taucape, capetaubm, tau_min, 
                                           ix, jx, kx,)
@@ -197,7 +208,7 @@ def test_betts_miller():
     rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
     betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
                                           HLv, Cp_air, Grav,
-                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm_grid, 
                                           do_simp, do_shallower, do_changeqref, 
                                           do_envsat, do_taucape, capetaubm, tau_min, 
                                           ix, jx, kx,)
@@ -207,7 +218,7 @@ def test_betts_miller():
     rain, tdel, qdel, q_ref, bmflag, klzbs, cape, cin, t_ref, invtau_bm_t, invtau_bm_q, capeflag = \
     betts_miller(dt, tin_grid, qin_grid_moist, pfull_grid, phalf_grid, 
                                           HLv, Cp_air, Grav,
-                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm, 
+                                          rdgas,rvgas,kappa, es0, tau_bm, rhbm_grid, 
                                           do_simp, do_shallower, do_changeqref, 
                                           do_envsat, do_taucape, capetaubm, tau_min, 
                                           ix, jx, kx,)
