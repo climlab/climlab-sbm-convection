@@ -17,6 +17,22 @@ as a stand-alone model. This is a lightweight wrapper that emulates the
 Fortran interface as closely as possible. 
 Dargan Frierson's original Fortran code is bundled here in the `src` directory for reference.
 
+## Installing
+
+Pre-built binaries for many platforms are available from [conda-forge](https://conda-forge.org).
+
+To install in the current environment:
+```
+conda install climlab-sbm-convection --channel conda-forge
+```
+or create a self-contained environment:
+```
+conda create --name my_env python=3.11 climlab-sbm-convection --channel conda-forge
+conda activate my_env
+```
+
+See below for instructions on how to build from source.
+
 ## Building from source
 
 ### Build environment
@@ -54,12 +70,12 @@ pytest -v --pyargs climlab_sbm_convection
 
 For now, see the notebooks in the `docs` directory of this repo.
 
-An appropriate runtime environment for this notebook can be found [here](https://github.com/brian-rose/ClimateLaboratoryBook/blob/main/environment.yml).
-
-To create an appropriate runtime environment for these notebooks, do this after building from source:
+An appropriate runtime environment for these notebooks is defined in the file `docs/example_env.yml`. To create this environment and launch the notebook server, navigate to the `docs` directory and do this:
 
 ```
-mamba install -c conda-forge climlab metpy jupyter matplotlib pandas ffmpeg
+conda env create -f example_env.yml
+conda activate sbm_example_env
+jupyter lab
 ```
 
 ## Version history
