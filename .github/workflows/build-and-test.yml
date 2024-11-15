@@ -39,11 +39,11 @@ jobs:
         run: |
           python -m pip install --no-deps .
         shell: micromamba-shell {0}
-      # - name: Import package
-      #   run: |
-      #     python -c "import climlab_sbm_convection"
-      #     python -c "from climlab_sbm_convection import betts_miller, escomp"
-      #   shell: micromamba-shell {0}
+      - name: Import package
+        run: |
+          python -c "import climlab_sbm_convection"
+          python -c "from climlab_sbm_convection import betts_miller, escomp"
+        shell: micromamba-shell {0}
       - name: Run tests
         run: |
           pytest -v --pyargs climlab_sbm_convection
