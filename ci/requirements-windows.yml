@@ -7,3 +7,4 @@ dependencies:
   - fortran-compiler
   - pytest
   - meson-python
+  - meson
