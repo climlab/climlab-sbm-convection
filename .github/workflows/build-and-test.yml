@@ -36,7 +36,7 @@ jobs:
         with:
           miniconda-version: "latest"
           python-version: ${{ matrix.python-version }}
-          activate-environment: convect_build_env
+          activate-environment: sbm_build_env
           channel-priority: strict
           environment-file: ${{ matrix.environment-file }}
 
