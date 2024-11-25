@@ -20,8 +20,7 @@ incdir_f2py = run_command(py,
 
 mysource = custom_target('_simplified_betts_miller.c',
   input : ['climlab_betts_miller.f90'],  
-  output : ['_simplified_betts_millermodule.c', 
-            '_simplified_betts_miller-f2pywrappers.f'],
+  output : ['_simplified_betts_millermodule.c'],
   command : [py, '-m', 'numpy.f2py', '@INPUT@', 
              '-m', '_simplified_betts_miller', '--lower', 
              '--build-dir', '@OUTDIR@']
