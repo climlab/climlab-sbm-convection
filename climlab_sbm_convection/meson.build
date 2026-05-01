@@ -28,11 +28,20 @@ mysource = custom_target('_simplified_betts_miller.c',
 
 inc_np = include_directories(incdir_numpy, incdir_f2py)
 
+# On Windows, statically link the Fortran/GCC runtime to avoid DLL-not-found
+# errors at import time (the conda mingw-w64 bin dir is not on PATH at runtime).
+if host_machine.system() == 'windows'
+  _link_args = ['-static-libgfortran', '-static-libgcc', '-static-libquadmath']
+else
+  _link_args = []
+endif
+
 py.extension_module('_simplified_betts_miller',
   ['climlab_betts_miller.f90', mysource],
   incdir_f2py / 'fortranobject.c',
   include_directories: inc_np,
   dependencies : py_dep,
+  link_args: _link_args,
   install : true,
   subdir: 'climlab_sbm_convection'
 )

@@ -46,11 +46,6 @@ jobs:
           channel-priority: strict
           environment-file: ${{ matrix.environment-file }}
 
-      - name: Setup compilers for Windows
-        if: ${{ matrix.os == 'Windows' }}
-        run: |
-          "CC=gcc" | Out-File -Append -Encoding ASCII $env:GITHUB_ENV
-          "FFLAGS=-static-libgfortran -static-libgcc" | Out-File -Append -Encoding ASCII $env:GITHUB_ENV
       - name: Build and install
         run: |
           python -m pip install --no-build-isolation --no-deps .
