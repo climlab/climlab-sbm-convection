@@ -31,7 +31,7 @@ inc_np = include_directories(incdir_numpy, incdir_f2py)
 # On Windows, statically link the Fortran/GCC runtime to avoid DLL-not-found
 # errors at import time (the conda mingw-w64 bin dir is not on PATH at runtime).
 if host_machine.system() == 'windows'
-  _link_args = ['-static-libgfortran', '-static-libgcc', '-static-libquadmath']
+  _link_args = ['-static-libgfortran', '-static-libgcc']
 else
   _link_args = []
 endif
