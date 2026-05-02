@@ -4,6 +4,7 @@ channels:
 dependencies:
   - pip
   - numpy
-  - fortran-compiler
+  - m2w64-gcc-fortran
   - pytest
   - meson-python
+  - ninja
