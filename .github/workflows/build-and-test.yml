@@ -50,15 +50,16 @@ jobs:
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          # gfortran comes from C:\mingw64\bin (GHCup's MinGW-Builds 15.x).
-          # conda's Library\mingw-w64\bin ships older m2w64 runtime DLLs that cause
-          # STATUS_ENTRYPOINT_NOT_FOUND (0xC0000139) when gfortran's sanity-check
-          # binary runs. Remove all competing MinGW DLL directories, then put
-          # C:\mingw64\bin first so the correct runtime DLLs are found.
-          $mingwBin = "C:\mingw64\bin"
+          # m2w64-gcc-fortran installs gfortran.exe AND libgfortran-5.dll together
+          # in Library/mingw-w64/bin, making them version-consistent.
+          # GHCup's C:\mingw64\bin has gfortran.exe but no libgfortran-5.dll,
+          # causing STATUS_ENTRYPOINT_NOT_FOUND (0xC0000139) at sanity-check time.
+          # Put conda's mingw-w64/bin first and remove all other MinGW sources.
+          $mingwBin = "$env:CONDA\envs\sbm_build_env\Library\mingw-w64\bin"
           $filteredPath = ($env:PATH -split ';' | Where-Object {
               $_ -notlike 'C:\Strawberry*' -and
               $_ -notlike '*Library\mingw-w64\bin' -and
+              $_ -notlike 'C:\mingw64*' -and
               $_ -notlike 'C:\Program Files\Git\mingw64*' -and
               $_ -ne ''
           }) -join ';'
